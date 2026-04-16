@@ -1,0 +1,46 @@
+name: postly
+description: "Posta — A minimal dark social reader built with Clean Architecture."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+
+  # Networking
+  dio: ^5.7.0
+
+  # Dependency injection
+  get_it: ^8.0.2
+  injectable: ^2.4.4
+
+  # Functional programming (Either)
+  dartz: ^0.10.1
+
+  # Typography
+  google_fonts: ^6.2.1
+
+  # Charts
+  fl_chart: ^0.68.0
+
+  # Local storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.12
+  injectable_generator: ^2.6.2
+  hive_generator: ^2.0.1
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
