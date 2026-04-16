@@ -11,27 +11,40 @@ class GetPostStatsUseCase {
   PostStatsEntity call(List<PostEntity> posts) {
     assert(posts.isNotEmpty, 'Cannot compute stats from an empty post list');
 
-    final totalPosts = posts.length;
+    // Normalize list to domain entities to avoid runtime generic mismatches
+    // when an upstream layer accidentally passes List<PostModel>.
+    final normalizedPosts = posts
+        .map(
+          (p) => PostEntity(
+            id: p.id,
+            userId: p.userId,
+            title: p.title,
+            body: p.body,
+          ),
+        )
+        .toList(growable: false);
 
-    final totalAuthors = posts.map((p) => p.userId).toSet().length;
+    final totalPosts = normalizedPosts.length;
 
-    final totalWords = posts.fold<int>(
+    final totalAuthors = normalizedPosts.map((p) => p.userId).toSet().length;
+
+    final totalWords = normalizedPosts.fold<int>(
       0,
       (sum, p) => sum + p.body.split(RegExp(r'\s+')).length,
     );
     final avgWordsPerPost = totalWords ~/ totalPosts;
 
-    final longestPost = posts.reduce(
+    final longestPost = normalizedPosts.reduce(
       (a, b) => a.body.length >= b.body.length ? a : b,
     );
 
     final postsPerUser = <int, int>{};
-    for (final post in posts) {
+    for (final post in normalizedPosts) {
       postsPerUser[post.userId] = (postsPerUser[post.userId] ?? 0) + 1;
     }
 
     final wordFreq = <String, int>{};
-    for (final post in posts) {
+    for (final post in normalizedPosts) {
       final words = post.title
           .toLowerCase()
           .replaceAll(RegExp(r'[^a-z\s]'), '')
