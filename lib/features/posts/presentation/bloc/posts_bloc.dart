@@ -23,19 +23,23 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
     Emitter<PostsState> emit,
   ) async {
     emit(const PostsLoading());
-    final result = await getPostsUseCase();
-    result.fold(
-      (failure) => emit(PostsFailure(failure.message)),
-      (posts) {
-        _allPosts = posts;
-        final firstPage = posts.take(postsPerPage).toList();
-        emit(PostsSuccess(
-          posts: firstPage,
-          hasReachedMax: posts.length <= postsPerPage,
-          currentPage: 1,
-        ));
-      },
-    );
+    try {
+      final result = await getPostsUseCase();
+      result.fold(
+        (failure) => emit(PostsFailure(failure.message)),
+        (posts) {
+          _allPosts = posts;
+          final firstPage = posts.take(postsPerPage).toList();
+          emit(PostsSuccess(
+            posts: firstPage,
+            hasReachedMax: posts.length <= postsPerPage,
+            currentPage: 1,
+          ));
+        },
+      );
+    } catch (e) {
+      emit(PostsFailure(e.toString()));
+    }
   }
 
   Future<void> _onLoadMore(
